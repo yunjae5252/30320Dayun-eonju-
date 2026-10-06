@@ -3,325 +3,1120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스터디 타임락 (Study TimeLock)</title>
+    <title>오프타임 - 자발적 디지털 디톡스</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* CSS 스타일링 */
+        :root {
+            --bg-color: #0F0F12;
+            --card-bg: #18181C;
+            --card-border: #282830;
+            --primary: #00F5D4;
+            --primary-glow: rgba(0, 245, 212, 0.15);
+            --danger: #FF4D6D;
+            --text-main: #F4F4F6;
+            --text-sub: #8E8E93;
+            --border-radius: 20px;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #f4f6f8;
+            background-color: #050507;
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px 10px;
         }
 
-        .container {
+        .phone-container {
             width: 100%;
-            max-width: 400px;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 30px 20px;
-            text-align: center;
-            position: relative;
+            max-width: 430px;
+            background-color: var(--bg-color);
+            border-radius: 36px;
+            border: 1px solid var(--card-border);
             overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 245, 212, 0.05);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 840px;
         }
 
-        h1 {
-            color: #2c3e50;
-            font-size: 1.5rem;
-            margin-bottom: 8px;
+        header {
+            padding: 24px 24px 12px;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        p.subtitle {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            margin-bottom: 25px;
+        header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Mascot Banner */
+        .mascot-banner {
+            background: var(--card-bg);
+            margin: 16px 20px 12px;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .mascot-svg {
+            width: 75px;
+            height: 75px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 8px rgba(0, 245, 212, 0.2));
+        }
+
+        .mascot-speech {
+            background: rgba(0, 245, 212, 0.08);
+            border: 1px solid rgba(0, 245, 212, 0.25);
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--primary);
+            position: relative;
+            flex-grow: 1;
+            line-height: 1.45;
+        }
+
+        .mascot-speech::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px 7px 6px 0;
+            border-style: solid;
+            border-color: transparent rgba(0, 245, 212, 0.25) transparent transparent;
+        }
+
+        .content {
+            padding: 0 20px 90px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .slide-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--card-border);
+            padding: 22px 20px;
+            display: none;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .slide-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-indicator {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 18px;
         }
 
         .form-group {
             margin-bottom: 20px;
-            text-align: left;
         }
 
         label {
             display: block;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #34495e;
-            margin-bottom: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 10px;
         }
 
-        input[type="number"], select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #dcdde1;
-            border-radius: 10px;
-            font-size: 1rem;
-            outline: none;
-            transition: border 0.3s;
-        }
-
-        input[type="number"]:focus, select:focus {
-            border-color: #3498db;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-stop {
-            background-color: #e74c3c;
-            margin-top: 10px;
-        }
-
-        .btn-stop:hover {
-            background-color: #c0392b;
-        }
-
-        /* 타이머 영역 */
-        .timer-display {
-            display: none;
-            margin-top: 10px;
-        }
-
-        .timer-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            border: 8px solid #ebedf0;
-            border-top: 8px solid #3498db;
-            margin: 0 auto 20px;
+        /* Wheel Picker Style */
+        .picker-container {
+            position: relative;
+            height: 140px;
+            background: #0F0F12;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #2c3e50;
+            margin-bottom: 10px;
         }
 
-        .alert-message {
-            margin-bottom: 15px;
-            padding: 10px;
+        .picker-highlight {
+            position: absolute;
+            width: 90%;
+            height: 40px;
+            background: var(--primary-glow);
+            border-top: 1px solid var(--primary);
+            border-bottom: 1px solid var(--primary);
             border-radius: 8px;
-            font-size: 0.85rem;
-            display: none;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        .alert-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-        }
-
-        /* 차단 화면 (오버레이) */
-        .lock-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        .picker-column {
+            flex: 1;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.92);
-            z-index: 9999;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
+            z-index: 2;
+            padding: 50px 0;
+        }
+
+        .picker-column::-webkit-scrollbar {
+            display: none;
+        }
+
+        .picker-item {
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-sub);
+            user-select: none;
+            transition: color 0.15s ease, opacity 0.15s ease;
+            opacity: 0.3;
+        }
+
+        .picker-item.active {
+            color: var(--primary);
+            opacity: 1;
+        }
+
+        .picker-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0 2px;
+            z-index: 2;
+        }
+
+        .app-category {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-sub);
+            margin: 16px 0 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .app-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: #0F0F12;
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .app-item:has(input:checked) {
+            border-color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        .app-icon {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .app-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            margin-left: auto;
+        }
+
+        .app-item span.app-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            background: #0F0F12;
+            font-size: 15px;
+            outline: none;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: var(--primary);
+            color: #050507;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 245, 212, 0.25);
+        }
+
+        .btn-secondary {
+            background: #222228;
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
+        .btn-stop {
+            background: var(--danger);
             color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        .ongoing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .ongoing-mascot-box {
+            background: #0F0F12;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .ongoing-mascot-svg {
+            width: 120px;
+            height: 120px;
+            filter: drop-shadow(0 0 12px rgba(0, 245, 212, 0.3));
+            margin-bottom: 12px;
+        }
+
+        .ongoing-speech-bubble {
+            background: rgba(0, 245, 212, 0.1);
+            border: 1px solid rgba(0, 245, 212, 0.3);
+            border-radius: 14px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            width: 100%;
+            line-height: 1.4;
+        }
+
+        .timer-display {
+            text-align: center;
+            padding: 10px 0 20px;
+            width: 100%;
+        }
+
+        .timer-value {
+            font-size: 46px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -1px;
+            margin: 8px 0;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .timer-subtext {
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .alert-box {
+            background: rgba(255, 183, 3, 0.1);
+            border: 1px solid rgba(255, 183, 3, 0.4);
+            color: #FFB703;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: none;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .lock-screen {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 12, 0.96);
+            backdrop-filter: blur(25px);
+            z-index: 100;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            color: white;
+            padding: 30px;
             text-align: center;
         }
 
-        .lock-overlay h2 {
-            font-size: 2rem;
-            color: #e74c3c;
-            margin-bottom: 15px;
+        .lock-screen h2 {
+            font-size: 22px;
+            color: var(--primary);
+            margin-top: 16px;
+            margin-bottom: 8px;
         }
 
-        .lock-overlay p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: #ecf0f1;
+        .lock-screen p {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 24px;
+            line-height: 1.5;
         }
 
-        .lock-overlay .btn-reset {
-            background-color: #2ecc71;
-            width: auto;
-            padding: 12px 30px;
+        .blocked-apps-tag {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .app-tag {
+            background: rgba(0, 245, 212, 0.1);
+            border: 1px solid rgba(0, 245, 212, 0.3);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        nav {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(24, 24, 28, 0.9);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 28px;
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-sub);
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .tab-view { display: none; }
+        .tab-view.active { display: block; }
+
+        .segmented-control {
+            display: flex;
+            background: #0F0F12;
+            padding: 3px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 20px;
+        }
+
+        .segment-btn {
+            flex: 1;
+            padding: 8px 0;
+            border: none;
+            background: transparent;
+            font-size: 12.5px;
+            font-weight: 600;
+            border-radius: 9px;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: all 0.2s;
+        }
+
+        .segment-btn.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            border: 1px solid var(--card-border);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>📱 스터디 타임락</h1>
-        <p class="subtitle">공부할 시간을 정하고 집중해 보세요!</p>
+<div class="phone-container">
+    <header>
+        <h1>오프타임</h1>
+        <span style="font-size: 12px; color: var(--text-sub); font-weight: 700; letter-spacing: 1px;">OFF-TIME</span>
+    </header>
 
-        <!-- STEP 1: 설정 폼 -->
-        <div id="setup-form">
-            <div class="form-group">
-                <label for="minutes">목표 공부 시간 (분 단위)</label>
-                <input type="number" id="minutes" min="1" max="180" value="10" placeholder="예: 30">
-            </div>
-
-            <div class="form-group">
-                <label for="target-app">차단 대상 앱 지정</label>
-                <select id="target-app">
-                    <option value="전체 스마트폰">스마트폰 전체 차단</option>
-                    <option value="유튜브/SNS">유튜브 & SNS</option>
-                    <option value="게임 앱">게임 앱</option>
-                    <option value="웹 브라우저">웹 브라우저</option>
-                </select>
-            </div>
-
-            <button class="btn" id="start-btn">공부 시작하기</button>
-        </div>
-
-        <!-- STEP 2~3: 타이머 진행 화면 -->
-        <div id="timer-screen" class="timer-display">
-            <div id="alert-box" class="alert-message alert-warning"></div>
-            
-            <div class="timer-circle" id="time-text">00:00</div>
-            
-            <p id="app-info" style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 15px;"></p>
-            
-            <button class="btn btn-stop" id="stop-btn">집중 중단하기</button>
+    <div class="mascot-banner" id="topMascotBanner">
+        <svg class="mascot-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M42 12 L50 22 L58 12 L55 28 L45 28 Z" fill="#00F5D4"/>
+            <path d="M25 45 C25 28, 38 22, 50 22 C62 22, 75 28, 75 45 C75 62, 65 78, 50 78 C35 78, 25 62, 25 45 Z" fill="#7B2CBF"/>
+            <path d="M40 50 C40 42, 60 42, 60 50 C60 68, 40 68, 40 50 Z" fill="#00F5D4"/>
+            <polygon points="32,38 44,42 36,46" fill="#FFE600"/>
+            <polygon points="34,40 42,42 37,44" fill="#0F0F12"/>
+            <polygon points="68,38 56,42 64,46" fill="#FFE600"/>
+            <polygon points="66,40 58,42 63,44" fill="#0F0F12"/>
+            <path d="M68 68 C80 65, 88 75, 82 85 C78 78, 72 75, 65 72 Z" fill="#7B2CBF"/>
+            <path d="M82 85 L88 78 L85 88 L92 82" stroke="#00F5D4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 42 L12 38 L20 48 Z" fill="#00F5D4"/>
+            <path d="M78 42 L88 38 L80 48 Z" fill="#00F5D4"/>
+        </svg>
+        <div class="mascot-speech" id="mascotMessage">
+            목표 시간 돌려서 정해라~⚡
         </div>
     </div>
 
-    <!-- STEP 4: 화면 차단 오버레이 -->
-    <div class="lock-overlay" id="lock-screen">
-        <h2>🔒 핸드폰 사용이 제한되었습니다!</h2>
-        <p>설정한 공부 제한 시간이 완료되었습니다.<br><strong id="locked-app-name"></strong> 사용이 차단됩니다.</p>
-        <p style="font-size: 0.9rem; color: #bdc3c7;">이제 잠시 휴식을 취하거나 계속 공부에 집중하세요!</p>
-        <button class="btn btn-reset" id="reset-btn">확인 및 처음으로</button>
+    <div class="content">
+        <div id="tab-timer" class="tab-view active">
+            
+            <div id="alertBox" class="alert-box">
+                ⚠️ 시간이 얼마 안 남았습니다! 종료 준비하세요!
+            </div>
+
+            <!-- SLIDE 1 -->
+            <div id="slide-1" class="slide-card active">
+                <span class="step-indicator">STEP 01 / 02</span>
+                <div class="card-title">목표 사용 시간 설정</div>
+                
+                <div class="form-group">
+                    <label>하루 목표 시간 설정</label>
+                    <div class="picker-container">
+                        <div class="picker-highlight"></div>
+                        <div class="picker-column" id="hoursWheel"></div>
+                        <span class="picker-label">시간</span>
+                        <div class="picker-column" id="minsWheel"></div>
+                        <span class="picker-label">분</span>
+                    </div>
+                </div>
+
+                <!-- 제한 종료 시간 무한 루프 휠 피커 -->
+                <div class="form-group">
+                    <label>제한 종료 시간 지정 (무한 스크롤)</label>
+                    <div class="picker-container">
+                        <div class="picker-highlight"></div>
+                        
+                        <!-- 오전/오후 피커 (단순 2항목) -->
+                        <div class="picker-column" id="ampmCurfewWheel">
+                            <div class="picker-item">오전</div>
+                            <div class="picker-item">오후</div>
+                        </div>
+
+                        <!-- 1시 ~ 12시 무한 피커 -->
+                        <div class="picker-column" id="hoursCurfewWheel"></div>
+                        <span class="picker-label">시</span>
+
+                        <!-- 00분 ~ 59분 무한 피커 -->
+                        <div class="picker-column" id="minsCurfewWheel"></div>
+                        <span class="picker-label">분</span>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>디톡스 모드 설정</label>
+                    <select id="focusModeSelect">
+                        <option value="strict">⚡ 하드코어 모드 앱 즉시 차단</option>
+                        <option value="normal" selected>🌱 일반 모드 종료 전 알림</option>
+                    </select>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn" onclick="nextSlide(2)">다음 ➔</button>
+                </div>
+            </div>
+
+            <!-- SLIDE 2 -->
+            <div id="slide-2" class="slide-card">
+                <span class="step-indicator">STEP 02 / 02</span>
+                <div class="card-title">차단할 앱 선택</div>
+                
+                <div class="app-category">소셜 미디어</div>
+                <div class="app-grid">
+                    <label class="app-item"><span class="app-icon">📷</span><span class="app-name">인스타그램</span><input type="checkbox" value="인스타그램" checked></label>
+                    <label class="app-item"><span class="app-icon">🎵</span><span class="app-name">틱톡</span><input type="checkbox" value="틱톡" checked></label>
+                    <label class="app-item"><span class="app-icon">🐦</span><span class="app-name">X</span><input type="checkbox" value="X"></label>
+                    <label class="app-item"><span class="app-icon">📘</span><span class="app-name">페이스북</span><input type="checkbox" value="페이스북"></label>
+                    <label class="app-item"><span class="app-icon">🧵</span><span class="app-name">스레드</span><input type="checkbox" value="스레드"></label>
+                    <label class="app-item"><span class="app-icon">📌</span><span class="app-name">핀터레스트</span><input type="checkbox" value="핀터레스트"></label>
+                </div>
+
+                <div class="app-category">엔터테인먼트 & 미디어</div>
+                <div class="app-grid">
+                    <label class="app-item"><span class="app-icon">▶️</span><span class="app-name">유튜브</span><input type="checkbox" value="유튜브" checked></label>
+                    <label class="app-item"><span class="app-icon">🎬</span><span class="app-name">넷플릭스</span><input type="checkbox" value="넷플릭스"></label>
+                    <label class="app-item"><span class="app-icon">📖</span><span class="app-name">네이버 웹툰</span><input type="checkbox" value="네이버 웹툰" checked></label>
+                    <label class="app-item"><span class="app-icon">📺</span><span class="app-name">티빙</span><input type="checkbox" value="티빙"></label>
+                    <label class="app-item"><span class="app-icon">🍿</span><span class="app-name">쿠팡플레이</span><input type="checkbox" value="쿠팡플레이"></label>
+                    <label class="app-item"><span class="app-icon">🎥</span><span class="app-name">왓챠</span><input type="checkbox" value="왓챠"></label>
+                </div>
+
+                <div class="app-category">게임</div>
+                <div class="app-grid">
+                    <label class="app-item"><span class="app-icon">🎮</span><span class="app-name">모바일 게임</span><input type="checkbox" value="모바일 게임" checked></label>
+                    <label class="app-item"><span class="app-icon">🧱</span><span class="app-name">로블록스</span><input type="checkbox" value="로블록스"></label>
+                    <label class="app-item"><span class="app-icon">⚔️</span><span class="app-name">원신</span><input type="checkbox" value="원신"></label>
+                    <label class="app-item"><span class="app-icon">🎲</span><span class="app-name">전략 RPG</span><input type="checkbox" value="전략 RPG"></label>
+                </div>
+
+                <div class="app-category">생산성 & 정보 검색</div>
+                <div class="app-grid">
+                    <label class="app-item"><span class="app-icon">💚</span><span class="app-name">네이버</span><input type="checkbox" value="네이버"></label>
+                    <label class="app-item"><span class="app-icon">💬</span><span class="app-name">카카오톡</span><input type="checkbox" value="카카오톡"></label>
+                    <label class="app-item"><span class="app-icon">🎧</span><span class="app-name">디스코드</span><input type="checkbox" value="디스코드"></label>
+                    <label class="app-item"><span class="app-icon">🌐</span><span class="app-name">웹 브라우저</span><input type="checkbox" value="웹 브라우저"></label>
+                </div>
+
+                <div class="app-category">유틸리티 & 쇼핑</div>
+                <div class="app-grid">
+                    <label class="app-item"><span class="app-icon">🛒</span><span class="app-name">쿠팡</span><input type="checkbox" value="쿠팡"></label>
+                    <label class="app-item"><span class="app-icon">🛵</span><span class="app-name">배달의민족</span><input type="checkbox" value="배달의민족"></label>
+                    <label class="app-item"><span class="app-icon">🥕</span><span class="app-name">당근</span><input type="checkbox" value="당근"></label>
+                    <label class="app-item"><span class="app-icon">👗</span><span class="app-name">쇼핑 패션</span><input type="checkbox" value="쇼핑 패션"></label>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="nextSlide(1)">⬅ 이전</button>
+                    <button class="btn" onclick="startFocus()">집중 시작하기 ⚡</button>
+                </div>
+            </div>
+
+            <!-- SLIDE 3 -->
+            <div id="slide-3" class="slide-card">
+                <span class="step-indicator">ON GOING</span>
+                <div class="card-title">디톡스 진행 중</div>
+
+                <div class="ongoing-container">
+                    <div class="ongoing-mascot-box">
+                        <svg class="ongoing-mascot-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M42 12 L50 22 L58 12 L55 28 L45 28 Z" fill="#00F5D4"/>
+                            <path d="M25 45 C25 28, 38 22, 50 22 C62 22, 75 28, 75 45 C75 62, 65 78, 50 78 C35 78, 25 62, 25 45 Z" fill="#7B2CBF"/>
+                            <path d="M40 50 C40 42, 60 42, 60 50 C60 68, 40 68, 40 50 Z" fill="#00F5D4"/>
+                            <polygon points="32,38 44,42 36,46" fill="#FFE600"/>
+                            <polygon points="34,40 42,42 37,44" fill="#0F0F12"/>
+                            <polygon points="68,38 56,42 64,46" fill="#FFE600"/>
+                            <polygon points="66,40 58,42 63,44" fill="#0F0F12"/>
+                            <path d="M68 68 C80 65, 88 75, 82 85 C78 78, 72 75, 65 72 Z" fill="#7B2CBF"/>
+                            <path d="M82 85 L88 78 L85 88 L92 82" stroke="#00F5D4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 42 L12 38 L20 48 Z" fill="#00F5D4"/>
+                            <path d="M78 42 L88 38 L80 48 Z" fill="#00F5D4"/>
+                        </svg>
+                        <div class="ongoing-speech-bubble" id="ongoingMascotMessage">
+                            눈 지켜보고 있다...<br>딴짓 생각도 하지 마라!⚡
+                        </div>
+                    </div>
+
+                    <div class="timer-display">
+                        <div class="timer-subtext">남은 허용 사용 시간</div>
+                        <div class="timer-value" id="timeRemaining">02:00:00</div>
+                        <div class="timer-subtext" id="curfewSubtext">설정한 제한 시간까지 측정이 계속됩니다</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-stop" onclick="stopFocus()">집중 중단하기</button>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: 사용 리포트 -->
+        <div id="tab-report" class="tab-view">
+            <div class="slide-card active" style="display:block;">
+                <span class="step-indicator">STEP 05</span>
+                <div class="card-title">핸드폰 사용 리포트</div>
+
+                <div class="segmented-control">
+                    <button class="segment-btn active" onclick="updateReport('week', this)">지난 1주일</button>
+                    <button class="segment-btn" onclick="updateReport('month', this)">지난 1달</button>
+                    <button class="segment-btn" onclick="updateReport('year', this)">지난 1년</button>
+                </div>
+
+                <div style="position: relative; height: 200px; width: 100%;">
+                    <canvas id="usageChart"></canvas>
+                </div>
+            </div>
+
+            <div class="slide-card active" style="display:block; margin-top:16px;">
+                <div class="card-title" style="font-size:15px; margin-bottom:12px;">달성 요약</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0;">
+                    <span style="font-size: 13.5px; color: var(--text-sub);">평균 일일 사용 시간</span>
+                    <span style="font-size: 15px; font-weight: 700; color: var(--primary);" id="avgUsageText">2시간 15분</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-top: 1px solid var(--card-border);">
+                    <span style="font-size: 13.5px; color: var(--text-sub);">목표 달성률</span>
+                    <span style="font-size: 15px; font-weight: 700; color: var(--primary);" id="successRateText">85%</span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- 자바스크립트 알고리즘 및 동작 구현 -->
-    <script>
-        let timerInterval;
-        let totalSeconds = 0;
-        let remainingSeconds = 0;
-
-        const setupForm = document.getElementById('setup-form');
-        const timerScreen = document.getElementById('timer-screen');
-        const lockScreen = document.getElementById('lock-screen');
+    <!-- LOCK SCREEN -->
+    <div id="lockScreen" class="lock-screen">
+        <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
+        <h2>오프타임 - 제한 시간 도달</h2>
+        <p>설정한 사용 시간을 모두 소진했습니다.<br>선택한 앱이 즉시 차단됩니다.</p>
         
-        const minutesInput = document.getElementById('minutes');
-        const targetAppSelect = document.getElementById('target-app');
-        const timeText = document.getElementById('time-text');
-        const alertBox = document.getElementById('alert-box');
-        const appInfo = document.getElementById('app-info');
-        const lockedAppName = document.getElementById('locked-app-name');
+        <div class="blocked-apps-tag" id="blockedAppsContainer"></div>
 
-        const startBtn = document.getElementById('start-btn');
-        const stopBtn = document.getElementById('stop-btn');
-        const resetBtn = document.getElementById('reset-btn');
+        <button class="btn" style="width: 200px;" onclick="unlockPhone()">확인 잠금 해제</button>
+    </div>
 
-        // [STEP 1] 공부 시작
-        startBtn.addEventListener('click', () => {
-            const mins = parseInt(minutesInput.value);
-            if (isNaN(mins) || mins <= 0) {
-                alert('올바른 시간을 입력해 주세요.');
+    <nav>
+        <button class="nav-item active" onclick="switchTab('timer', this)">
+            <span class="nav-icon">⏱️</span>
+            <span>타이머</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('report', this)">
+            <span class="nav-icon">📊</span>
+            <span>사용 리포트</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    let timerInterval = null;
+    let selectedHours = 2;
+    let selectedMins = 0;
+    let totalSeconds = 0;
+    let chartInstance = null;
+    
+    const scrollStates = new Map();
+
+    // 무한 순환 피커 생성 로직 (5번 반복 생성하여 끊김 없는 루프 구현)
+    function initPickerElements() {
+        const hrsWheel = document.getElementById('hoursWheel');
+        const minsWheel = document.getElementById('minsWheel');
+        const hoursCurfewWheel = document.getElementById('hoursCurfewWheel');
+        const minsCurfewWheel = document.getElementById('minsCurfewWheel');
+        const ampmCurfewWheel = document.getElementById('ampmCurfewWheel');
+        
+        hrsWheel.innerHTML = '';
+        minsWheel.innerHTML = '';
+        hoursCurfewWheel.innerHTML = '';
+        minsCurfewWheel.innerHTML = '';
+
+        // 1. 목표 시간 휠 (00~12시간 무한)
+        buildInfiniteWheel(hrsWheel, 0, 12);
+
+        // 2. 목표 분 휠 (00~59분 무한)
+        buildInfiniteWheel(minsWheel, 0, 59);
+
+        // 3. 제한 종료 시 휠 (1시 ~ 12시 무한)
+        buildInfiniteWheel(hoursCurfewWheel, 1, 12);
+
+        // 4. 제한 종료 분 휠 (00분 ~ 59분 무한)
+        buildInfiniteWheel(minsCurfewWheel, 0, 59);
+
+        const allWheels = [hrsWheel, minsWheel, ampmCurfewWheel, hoursCurfewWheel, minsCurfewWheel];
+        allWheels.forEach(wheel => {
+            setupInfiniteWheel(wheel);
+        });
+
+        // 초기 위치 설정 (중앙 블록 위치로 지정하여 자연스러운 상하 스크롤 보장)
+        setTimeout(() => {
+            const hBlockHeight = 13 * 40;
+            const mBlockHeight = 60 * 40;
+
+            hrsWheel.scrollTop = (hBlockHeight * 2) + (2 * 40); // 2시간
+            minsWheel.scrollTop = (mBlockHeight * 2); // 0분
+            ampmCurfewWheel.scrollTop = 1 * 40; // 오후
+            hoursCurfewWheel.scrollTop = (12 * 40 * 2) + (9 * 40); // 10시 (1시부터 시작이므로 index 9)
+            minsCurfewWheel.scrollTop = (mBlockHeight * 2); // 0분
+            
+            allWheels.forEach(wheel => updateActiveItem(wheel));
+        }, 100);
+    }
+
+    // N 세트의 반복 아이템 생성 함수
+    function buildInfiniteWheel(wheelElement, startVal, endVal) {
+        const count = (endVal - startVal) + 1;
+        // 5 세트 반복 배치 (0, 1, [2:중앙], 3, 4)
+        for (let r = 0; r < 5; r++) {
+            for (let i = startVal; i <= endVal; i++) {
+                const div = document.createElement('div');
+                div.className = 'picker-item';
+                div.innerText = String(i).padStart(2, '0');
+                div.dataset.value = i;
+                wheelElement.appendChild(div);
+            }
+        }
+        wheelElement.dataset.count = count;
+    }
+
+    // 무한 루프 및 부드러운 스크롤 처리
+    function setupInfiniteWheel(wheel) {
+        let isTouching = false;
+        let timeoutId = null;
+
+        wheel.addEventListener('touchstart', () => {
+            isTouching = true;
+            if (scrollStates.has(wheel)) {
+                cancelAnimationFrame(scrollStates.get(wheel).animId);
+            }
+        }, { passive: true });
+
+        wheel.addEventListener('touchend', () => {
+            isTouching = false;
+            smoothSnap(wheel);
+        }, { passive: true });
+
+        wheel.addEventListener('scroll', () => {
+            checkInfiniteLoop(wheel);
+            updateActiveItem(wheel);
+            if (!isTouching) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    smoothSnap(wheel);
+                }, 80);
+            }
+        }, { passive: true });
+
+        wheel.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            wheel.scrollTop += e.deltaY * 0.5;
+            checkInfiniteLoop(wheel);
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                smoothSnap(wheel);
+            }, 80);
+        }, { passive: false });
+    }
+
+    // 끝부분 도달 시 위치 재조정 (12 -> 1, 59 -> 00 무한 연결 핵심)
+    function checkInfiniteLoop(wheel) {
+        const count = parseInt(wheel.dataset.count);
+        if (!count) return; // 오전/오후 등 일반 피커 제외
+
+        const blockHeight = count * 40;
+        const current = wheel.scrollTop;
+
+        // 상단 끝 근처 도달 시 중앙 영역으로 점프
+        if (current < blockHeight) {
+            wheel.scrollTop += blockHeight * 2;
+        } 
+        // 하단 끝 근처 도달 시 중앙 영역으로 점프
+        else if (current > blockHeight * 3) {
+            wheel.scrollTop -= blockHeight * 2;
+        }
+    }
+
+    // Snap 정렬 및 부드러운 이징 효과
+    function smoothSnap(wheel) {
+        const itemHeight = 40;
+        const targetScroll = Math.round(wheel.scrollTop / itemHeight) * itemHeight;
+        
+        if (scrollStates.has(wheel)) {
+            cancelAnimationFrame(scrollStates.get(wheel).animId);
+        }
+
+        function animate() {
+            const current = wheel.scrollTop;
+            const diff = targetScroll - current;
+            
+            if (Math.abs(diff) < 0.5) {
+                wheel.scrollTop = targetScroll;
+                checkInfiniteLoop(wheel);
+                updateActiveItem(wheel);
+                updateSelectedValues();
                 return;
             }
 
-            totalSeconds = mins * 60;
-            remainingSeconds = totalSeconds;
-
-            appInfo.innerText = `차단 대상: [${targetAppSelect.value}]`;
+            wheel.scrollTop += diff * 0.2;
+            checkInfiniteLoop(wheel);
+            updateActiveItem(wheel);
             
-            setupForm.style.display = 'none';
-            timerScreen.style.display = 'block';
-            alertBox.style.display = 'none';
+            const animId = requestAnimationFrame(animate);
+            scrollStates.set(wheel, { animId });
+        }
 
+        animate();
+    }
+
+    // 중앙 활성화 상태 업데이트
+    function updateActiveItem(wheel) {
+        const items = wheel.querySelectorAll('.picker-item');
+        const activeIndex = Math.round(wheel.scrollTop / 40);
+
+        items.forEach((item, index) => {
+            if (index === activeIndex) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function updateSelectedValues() {
+        const hrsWheel = document.getElementById('hoursWheel');
+        const minsWheel = document.getElementById('minsWheel');
+        
+        const hrsItem = hrsWheel.querySelectorAll('.picker-item')[Math.round(hrsWheel.scrollTop / 40)];
+        const minsItem = minsWheel.querySelectorAll('.picker-item')[Math.round(minsWheel.scrollTop / 40)];
+
+        if (hrsItem) selectedHours = parseInt(hrsItem.dataset.value);
+        if (minsItem) selectedMins = parseInt(minsItem.dataset.value);
+    }
+
+    function nextSlide(slideNum) {
+        document.querySelectorAll('.slide-card').forEach(card => card.classList.remove('active'));
+        document.getElementById(`slide-${slideNum}`).classList.add('active');
+
+        const topBanner = document.getElementById('topMascotBanner');
+
+        if (slideNum === 1) {
+            topBanner.style.display = 'flex';
+            setMascotMessage("목표 시간 돌려서 정해라~⚡");
+        } else if (slideNum === 2) {
+            topBanner.style.display = 'flex';
+            setMascotMessage("딴짓하게 만드는 앱 전부 다 골라봐!");
+        } else if (slideNum === 3) {
+            topBanner.style.display = 'none';
+        }
+    }
+
+    function switchTab(tabName, element) {
+        document.querySelectorAll('.tab-view').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+        
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        element.classList.add('active');
+
+        if(tabName === 'report') {
+            initChart();
+        }
+    }
+
+    function startFocus() {
+        updateSelectedValues();
+        totalSeconds = (selectedHours * 3600) + (selectedMins * 60);
+        if (totalSeconds === 0) totalSeconds = 3600;
+
+        nextSlide(3);
+
+        const ongoingMsgs = [
+            "눈 지켜보고 있다...<br>딴짓 생각도 하지 마라!⚡",
+            "집중 제대로 하고 있지?<br>끝까지 가보자고!🔥",
+            "폰 내려놓고 목표에 집중해라~⚡"
+        ];
+        document.getElementById('ongoingMascotMessage').innerHTML = ongoingMsgs[Math.floor(Math.random() * ongoingMsgs.length)];
+
+        updateTimerDisplay();
+
+        timerInterval = setInterval(() => {
+            totalSeconds--;
             updateTimerDisplay();
-            
-            // 1초마다 타이머 감소
-            timerInterval = setInterval(runTimer, 1000);
-        });
 
-        // [STEP 2 & 3] 타이머 구동 및 알림 로직
-        function runTimer() {
-            remainingSeconds--;
-
-            updateTimerDisplay();
-
-            // STEP 3: 미리 알림 (사전 알림 기능)
-            // 테스트 편의성을 위해 10분/5분 전 알림을 포함하되, 시간이 짧을 경우(예: 10초, 5초 전)에도 감지하도록 설정
-            if (remainingSeconds === 600) { // 10분 전
-                showAlert("⚠️ 제한 시간 10분 전입니다! 정리 준비를 하세요.");
-            } else if (remainingSeconds === 300) { // 5분 전
-                showAlert("⚠️ 제한 시간 5분 전입니다! 곧 핸드폰이 잠깁니다.");
-            } else if (totalSeconds < 300 && remainingSeconds === 10) { // 5분 미만 설정 시 10초 전 테스트용
-                showAlert("⚠️ 10초 후 핸드폰 사용이 제한됩니다!");
+            if (totalSeconds === 600 || totalSeconds === 300) {
+                triggerAlert();
             }
 
-            // [STEP 4] 시간 종료 시 차단
-            if (remainingSeconds <= 0) {
+            if (totalSeconds <= 0) {
                 clearInterval(timerInterval);
-                triggerLockScreen();
+                triggerLock();
             }
-        }
+        }, 1000);
+    }
 
-        // 화면 시간 업데이트
-        function updateTimerDisplay() {
-            const m = Math.floor(remainingSeconds / 60);
-            const s = remainingSeconds % 60;
-            timeText.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
+    function updateTimerDisplay() {
+        const hrs = Math.floor(totalSeconds / 3600);
+        const mins = Math.floor((totalSeconds % 3600) / 60);
+        const secs = totalSeconds % 60;
 
-        // 사전 알림 메시지 출력
-        function showAlert(msg) {
-            alertBox.innerText = msg;
-            alertBox.style.display = 'block';
-        }
+        document.getElementById('timeRemaining').innerText = 
+            `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
 
-        // [STEP 4] 화면 차단 실행
-        function triggerLockScreen() {
-            lockedAppName.innerText = targetAppSelect.value;
-            lockScreen.style.display = 'flex';
-        }
+    function triggerAlert() {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.style.display = 'block';
+        document.getElementById('ongoingMascotMessage').innerHTML = "시간 얼마 안 남았다! 마무리 잘해라~ 🔥";
+        
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
 
-        // 중단 버튼 클릭
-        stopBtn.addEventListener('click', () => {
-            if (confirm('정말 공부를 중단하시겠습니까?')) {
-                clearInterval(timerInterval);
-                resetUI();
-            }
+    function triggerLock() {
+        const selectedApps = [];
+        document.querySelectorAll('.app-grid input[type="checkbox"]:checked').forEach(cb => {
+            selectedApps.push(cb.value);
         });
 
-        // [STEP 5] 리셋 및 처음으로
-        resetBtn.addEventListener('click', () => {
-            lockScreen.style.display = 'none';
-            resetUI();
+        const container = document.getElementById('blockedAppsContainer');
+        container.innerHTML = '';
+        selectedApps.forEach(app => {
+            const span = document.createElement('span');
+            span.className = 'app-tag';
+            span.innerText = `🚫 ${app}`;
+            container.appendChild(span);
         });
 
-        function resetUI() {
-            setupForm.style.display = 'block';
-            timerScreen.style.display = 'none';
-            alertBox.style.display = 'none';
+        document.getElementById('lockScreen').style.display = 'flex';
+    }
+
+    function unlockPhone() {
+        document.getElementById('lockScreen').style.display = 'none';
+        nextSlide(1);
+
+        const compliments = [
+            "아주 잘하셨습니다! 오늘 목표를 달성했어요! 🎉",
+            "오늘도 수고하셨습니다! 내일도 기대할게 ⚡"
+        ];
+        setMascotMessage(compliments[Math.floor(Math.random() * compliments.length)]);
+    }
+
+    function stopFocus() {
+        clearInterval(timerInterval);
+        nextSlide(1);
+        setMascotMessage("벌써 포기함? 다음엔 제대로 해라!");
+    }
+
+    function setMascotMessage(msg) {
+        document.getElementById('mascotMessage').innerText = msg;
+    }
+
+    function initChart() {
+        if (chartInstance) return;
+
+        const ctx = document.getElementById('usageChart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['월', '화', '수', '목', '금', '토', '일'],
+                datasets: [{
+                    label: '사용 시간 (시간)',
+                    data: [2.5, 1.8, 3.0, 2.0, 1.5, 4.0, 2.2],
+                    backgroundColor: '#00F5D4',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: '#282830' },
+                        ticks: { color: '#8E8E93' }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: '#8E8E93' }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateReport(type, btn) {
+        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (!chartInstance) return;
+
+        if (type === 'week') {
+            chartInstance.data.labels = ['월', '화', '수', '목', '금', '토', '일'];
+            chartInstance.data.datasets[0].data = [2.5, 1.8, 3.0, 2.0, 1.5, 4.0, 2.2];
+            document.getElementById('avgUsageText').innerText = '2시간 15분';
+            document.getElementById('successRateText').innerText = '85%';
+        } else if (type === 'month') {
+            chartInstance.data.labels = ['1주차', '2주차', '3주차', '4주차'];
+            chartInstance.data.datasets[0].data = [18, 14, 21, 15];
+            document.getElementById('avgUsageText').innerText = '2시간 30분';
+            document.getElementById('successRateText').innerText = '78%';
+        } else if (type === 'year') {
+            chartInstance.data.labels = ['1월', '3월', '5월', '7월', '9월', '11월'];
+            chartInstance.data.datasets[0].data = [75, 68, 80, 55, 60, 50];
+            document.getElementById('avgUsageText').innerText = '2시간 05분';
+            document.getElementById('successRateText').innerText = '90%';
         }
-    </script>
+        chartInstance.update();
+    }
+
+    window.onload = function() {
+        initPickerElements();
+    };
+</script>
+
 </body>
 </html>
